@@ -3,24 +3,32 @@ name: Java CI with Maven
 on:
   push:
     branches:
-      - master  #anyone pushes to 'Master' branch
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+    # Checkout the repository
     - name: Checkout code
       uses: actions/checkout@v2
 
+    # Set up JDK 11 (specify distribution as 'adoptopenjdk')
     - name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
-        distribution: 'adoptopenjdk'  # You can also use 'temurin' or 'zulu'
-        java-version: '11'
-        java-package: jdk
-        architecture: x64
-        check-latest: false
+        java-version: 11
+        distribution: 'adoptopenjdk'  # This specifies the distribution
+        cache: maven # Optional, caches Maven dependencies for faster builds
 
+    # Build with Maven
     - name: Build with Maven
-      run: mvn clean test  #build & test commands
+      run: mvn clean install
+
+    # Run tests with Maven
+    - name: Run tests with Maven
+      run: mvn test
